@@ -173,10 +173,26 @@ def downloadPlaylists():
     playlistID = playlists['items'][playlistNum - 1]['id']
     #find the tracks in the playlist
     tracks = sp.playlist_tracks(playlistID)
-    #take each track and put its name into a list in the format "artist - track", then print it
+    #take each track and put its name into a list in the format "artist - track"
     trackNames = [track['track']['artists'][0]['name'] + ' - ' + track['track']['name'] for track in tracks['items']]
+    #use pytube to search each track on youtube and download the first video as mp3 into a folder called the playlists name in current directory
     for track in trackNames:
-        print(track)
+        #search for the track on youtuibe and get ONE url. dont use a list
+        s = Search(track + ' audio')
+        searchResults = []
+        for v in s.results:
+            searchResults.append(v.watch_url)
+        #shorten the list to 1 result
+        searchResults = searchResults[0]
+        #download the video as mp3
+        yt = YouTube(searchResults)
+        yt.streams.filter(only_audio=True).first().download(filename=track + '.mp3', output_path=playlistName)
+        # if playlistName does not exis, default the folder to "(time and date) - Spotify Downloads"
+        if playlistName == "none":
+            playlistName = time.strftime("%Y-%m-%d %H-%M") + " - Spotify Downloads"
+        print(track + " downloaded.")
+        #reset the search results list
+        searchResults = []
     #call back to main
     main()
 
@@ -188,13 +204,16 @@ def downloadPlaylists():
 #define as main so that it can be called multiple times
 def main():
     ask = input("What would you like to do? (create playlist, download playlists): ")
-    while ask not in ["create playlist", "download playlists"]:
+    while ask not in ["create playlist", "download playlists", "exit"]:
         ask = input("Invalid input. What would you like to do? (create playlist, download playlists): ")
     if ask == "create playlist":
         createPlaylist()
 
     elif ask == "download playlists":
         downloadPlaylists()
+
+    elif ask == "exit":
+        exit()
 
 # go to main loop
 main()
