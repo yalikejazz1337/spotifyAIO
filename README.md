@@ -10,3 +10,5 @@ You can get music recommendations based on your music taste with this tool. Usin
 ### Downloading your Spotify playlists, albums, and tracks
 You can download playlists from your library onto your device, or find an album or a track to download instead.
 
+## Explanation
+A full explanation on how this tool wokrs will be provided at a later time. for now, if you really want to know what's up, check out "main.py"
